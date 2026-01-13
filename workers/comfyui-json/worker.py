@@ -65,10 +65,7 @@ worker_config = WorkerConfig(
         HandlerConfig(
             route="/generate",
             allow_parallel_requests=True,
-            max_queue_time=600.0,
-            benchmark_config=BenchmarkConfig(
-                dataset=benchmark_dataset,
-            )
+            max_queue_time=600.0
         ),
         HandlerConfig(
             route="/generate/sync",
