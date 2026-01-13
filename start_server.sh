@@ -117,7 +117,7 @@ function install_comfyui_custom_nodes() {
 
 [ -n "$BACKEND" ] && [ -z "$HF_TOKEN" ] && report_error_and_exit "HF_TOKEN must be set when BACKEND is set!"
 [ -z "$CONTAINER_ID" ] && report_error_and_exit "CONTAINER_ID must be set!"
-[ "$BACKEND" = "comfyui" ] && [ -z "$COMFY_MODEL" ] && report_error_and_exit "For comfyui backends, COMFY_MODEL must be set!"
+[ "$BACKEND" = "comfyui-json" ] && [ -z "$COMFY_MODEL" ] && report_error_and_exit "For comfyui-json backends, COMFY_MODEL must be set!"
 
 echo "start_server.sh"
 date
@@ -256,8 +256,8 @@ fi
 
 export REPORT_ADDR WORKER_PORT USE_SSL UNSECURED
 
-# Install ComfyUI custom nodes if backend is comfyui
-if [ "$BACKEND" = "comfyui" ]; then
+# Install ComfyUI custom nodes if backend is comfyui-json
+if [ "$BACKEND" = "comfyui-json" ]; then
     install_comfyui_custom_nodes
 fi
 
