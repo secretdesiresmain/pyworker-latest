@@ -73,6 +73,48 @@ function install_vastai_sdk() {
     fi
 }
 
+function install_comfyui_custom_nodes() {
+    # Install rgthree custom nodes for ComfyUI
+    # Try common ComfyUI installation paths
+    COMFYUI_DIR="${COMFYUI_DIR:-/workspace/ComfyUI}"
+    
+    if [ ! -d "$COMFYUI_DIR" ]; then
+        # Try alternative common locations
+        for alt_dir in "/opt/ComfyUI" "/usr/local/ComfyUI" "$WORKSPACE_DIR/ComfyUI"; do
+            if [ -d "$alt_dir" ]; then
+                COMFYUI_DIR="$alt_dir"
+                break
+            fi
+        done
+    fi
+    
+    if [ ! -d "$COMFYUI_DIR" ]; then
+        echo "WARNING: ComfyUI directory not found at $COMFYUI_DIR, skipping custom node installation"
+        return 0
+    fi
+    
+    CUSTOM_NODES_DIR="$COMFYUI_DIR/custom_nodes"
+    RGTHREE_DIR="$CUSTOM_NODES_DIR/rgthree-comfy"
+    
+    if [ ! -d "$CUSTOM_NODES_DIR" ]; then
+        echo "Creating custom_nodes directory: $CUSTOM_NODES_DIR"
+        if ! mkdir -p "$CUSTOM_NODES_DIR"; then
+            echo "WARNING: Failed to create custom_nodes directory"
+            return 0
+        fi
+    fi
+    
+    if [ ! -d "$RGTHREE_DIR" ]; then
+        echo "Installing rgthree custom nodes for ComfyUI"
+        if ! git clone https://github.com/rgthree/rgthree-comfy.git "$RGTHREE_DIR"; then
+            echo "WARNING: Failed to clone rgthree-comfy, continuing anyway"
+            return 0
+        fi
+    else
+        echo "rgthree custom nodes already installed at $RGTHREE_DIR"
+    fi
+}
+
 [ -n "$BACKEND" ] && [ -z "$HF_TOKEN" ] && report_error_and_exit "HF_TOKEN must be set when BACKEND is set!"
 [ -z "$CONTAINER_ID" ] && report_error_and_exit "CONTAINER_ID must be set!"
 [ "$BACKEND" = "comfyui" ] && [ -z "$COMFY_MODEL" ] && report_error_and_exit "For comfyui backends, COMFY_MODEL must be set!"
@@ -213,6 +255,11 @@ EOF
 fi
 
 export REPORT_ADDR WORKER_PORT USE_SSL UNSECURED
+
+# Install ComfyUI custom nodes if backend is comfyui
+if [ "$BACKEND" = "comfyui" ]; then
+    install_comfyui_custom_nodes
+fi
 
 if ! cd "$SERVER_DIR"; then
     report_error_and_exit "Failed to cd into SERVER_DIR: $SERVER_DIR"
