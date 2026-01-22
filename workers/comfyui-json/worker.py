@@ -65,7 +65,8 @@ worker_config = WorkerConfig(
         HandlerConfig(
             route="/generate",
             allow_parallel_requests=True,
-            max_queue_time=600.0
+            max_queue_time=600.0,
+            max_sessions=4
         ),
         HandlerConfig(
             route="/generate/sync",
@@ -80,7 +81,8 @@ worker_config = WorkerConfig(
         on_load=MODEL_LOAD_LOG_MSG,
         on_error=MODEL_ERROR_LOG_MSGS,
         on_info=MODEL_INFO_LOG_MSGS
-    )
+    ),
+    
 )
 
 Worker(worker_config).run()
