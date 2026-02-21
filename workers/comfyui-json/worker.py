@@ -61,7 +61,13 @@ worker_config = WorkerConfig(
     model_server_port=MODEL_SERVER_PORT,
     model_log_file=MODEL_LOG_FILE,
     model_healthcheck_url=MODEL_HEALTHCHECK_ENDPOINT,
+    max_sessions=2,
     handlers=[
+        HandlerConfig(
+            route="/generate",
+            allow_parallel_requests=True,
+            max_queue_time=600.0
+        ),
         HandlerConfig(
             route="/generate/sync",
             allow_parallel_requests=False,
@@ -75,7 +81,8 @@ worker_config = WorkerConfig(
         on_load=MODEL_LOAD_LOG_MSG,
         on_error=MODEL_ERROR_LOG_MSGS,
         on_info=MODEL_INFO_LOG_MSGS
-    )
+    ),
+    
 )
 
 Worker(worker_config).run()
