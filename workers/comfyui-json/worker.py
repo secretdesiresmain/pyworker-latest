@@ -43,7 +43,7 @@ benchmark_prompts = [
 benchmark_dataset = [
     {
         "input": {
-            "request_id": f"test-{random.randint(1000, 99999)}",
+            "request_id": f"benchmark-{random.randint(1000, 99999)}",
             "modifier": "Text2Image",
             "modifications": {
                 "prompt": prompt,
@@ -66,15 +66,15 @@ worker_config = WorkerConfig(
         HandlerConfig(
             route="/generate",
             allow_parallel_requests=True,
-            max_queue_time=600.0
+            max_queue_time=600.0,
+            benchmark_config=BenchmarkConfig(
+            dataset=benchmark_dataset,
+            )
         ),
         HandlerConfig(
             route="/generate/sync",
             allow_parallel_requests=False,
-            max_queue_time=10.0,
-            benchmark_config=BenchmarkConfig(
-                dataset=benchmark_dataset,
-            )
+            max_queue_time=10.0
         )
     ],
     log_action_config=LogActionConfig(
